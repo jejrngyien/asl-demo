@@ -1,0 +1,6 @@
+streamlit>=1.36
+torch
+mediapipe==0.10.14
+opencv-python-headless
+numpy
+pillow
