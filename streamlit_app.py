@@ -78,7 +78,11 @@ def load_model():
                      "or place model.pt next to this app.")
             st.stop()
         torch.hub.download_url_to_file(MODEL_URL, path, progress=False)
-    ckpt = torch.load(path, map_location="cpu", weights_only=False)
+    # mmap keeps the (unused) optimizer tensors on disk -> low peak RAM on free hosting.
+    try:
+        ckpt = torch.load(path, map_location="cpu", weights_only=False, mmap=True)
+    except (TypeError, RuntimeError):
+        ckpt = torch.load(path, map_location="cpu", weights_only=False)
     classes = [str(c) for c in ckpt["classes"]]
     arch = ckpt.get("model", "c3d")
     img_size = int(ckpt.get("img_size", 112))
