@@ -22,9 +22,17 @@ from models import build_model
 # After you create a GitHub Release with model.pt attached, put its URL here
 # (or set it as a Streamlit secret / env var named MODEL_URL). Example:
 #   https://github.com/USERNAME/asl-demo/releases/download/v1.0/model.pt
+def _secret(key: str) -> str:
+    try:
+        return st.secrets.get(key, "")  # raises if no secrets.toml exists
+    except Exception:
+        return ""
+
+
 MODEL_URL = (
-    st.secrets.get("MODEL_URL", "") if hasattr(st, "secrets") else ""
-) or os.environ.get("MODEL_URL", "") or "PUT_YOUR_GITHUB_RELEASE_URL_HERE"
+    _secret("MODEL_URL") or os.environ.get("MODEL_URL", "")
+    or "https://github.com/jejrngyien/asl-demo/releases/download/v1.0/model.pt"
+)
 LOCAL_MODEL = "model.pt"
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
