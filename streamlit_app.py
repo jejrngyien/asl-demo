@@ -69,13 +69,13 @@ def to_tensor_normalized(rgb_uint8: np.ndarray) -> torch.Tensor:
 
 
 # -------------------- Cached model / detector loading --------------------
-@st.cache_resource(show_spinner="Loading model…")
+@st.cache_resource(show_spinner="Modell wird geladen…")
 def load_model():
     path = LOCAL_MODEL
     if not os.path.exists(path):
         if not MODEL_URL or MODEL_URL == "PUT_YOUR_GITHUB_RELEASE_URL_HERE":
-            st.error("No model found. Set MODEL_URL to your GitHub Release URL, "
-                     "or place model.pt next to this app.")
+            st.error("Kein Modell gefunden. Setze MODEL_URL auf deine GitHub-Release-URL "
+                     "oder lege model.pt neben diese App.")
             st.stop()
         torch.hub.download_url_to_file(MODEL_URL, path, progress=False)
     # mmap keeps the (unused) optimizer tensors on disk -> low peak RAM on free hosting.
@@ -133,27 +133,27 @@ def predict(rgb: np.ndarray, model, classes, img_size, hands):
 
 
 # -------------------- UI --------------------
-st.set_page_config(page_title="ASL Fingerspelling Demo", page_icon="🤟")
-st.title("🤟 ASL Fingerspelling Recognition")
+st.set_page_config(page_title="ASL-Fingeralphabet – Demo", page_icon="🤟")
+st.title("🤟 ASL-Fingeralphabet-Erkennung")
 st.markdown(
-    "Show an **American Sign Language fingerspelling** handshape to your webcam "
-    "(or upload a photo) and the C3D model predicts the letter "
-    "(**A–Z + del/space/nothing**). A MediaPipe hand detector crops your hand first.\n\n"
-    "Part of the [ASL Recognition with 3D CNNs](https://github.com/jejrngyien/asl) project · "
-    "~84% Top-1 on the Kaggle ASL Alphabet."
+    "Zeig deiner Webcam eine Handform aus dem **Fingeralphabet der amerikanischen "
+    "Gebärdensprache** (oder lade ein Foto hoch), und das C3D-Modell sagt den Buchstaben "
+    "voraus (**A–Z + del/space/nothing**). Ein MediaPipe-Handdetektor schneidet zuerst deine Hand aus.\n\n"
+    "Teil des Projekts [ASL Recognition with 3D CNNs](https://github.com/jejrngyien/asl) · "
+    "~84 % Top-1 auf dem Kaggle ASL Alphabet."
 )
 
 model, classes, img_size = load_model()
 hands = load_hands()
 
-tab_cam, tab_up = st.tabs(["📷 Webcam", "🖼️ Upload"])
+tab_cam, tab_up = st.tabs(["📷 Webcam", "🖼️ Hochladen"])
 image = None
 with tab_cam:
-    shot = st.camera_input("Take a picture of your handshape")
+    shot = st.camera_input("Mach ein Foto deiner Handform")
     if shot is not None:
         image = np.array(Image.open(shot).convert("RGB"))
 with tab_up:
-    up = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    up = st.file_uploader("Bild hochladen", type=["jpg", "jpeg", "png"])
     if up is not None:
         image = np.array(Image.open(up).convert("RGB"))
 
@@ -163,15 +163,15 @@ if image is not None:
 
     col1, col2 = st.columns([1, 1])
     with col1:
-        st.image(crop, caption="What the model sees (112×112 crop)", width=224)
+        st.image(crop, caption="Was das Modell sieht (112×112-Ausschnitt)", width=224)
         if not used_mp:
-            st.warning("No hand detected — used a centered crop. "
-                       "Try a clearer handshape on a plain background.")
+            st.warning("Keine Hand erkannt — es wurde ein zentrierter Ausschnitt verwendet. "
+                       "Versuch eine klarere Handform vor einem ruhigen Hintergrund.")
     with col2:
         top = classes[order[0]]
-        st.metric("Prediction", top, f"{probs[order[0]] * 100:.1f}%")
+        st.metric("Vorhersage", top, f"{probs[order[0]] * 100:.1f}%")
         st.caption("Top-5")
         st.bar_chart({classes[i]: float(probs[i]) for i in order})
 
 st.divider()
-st.caption("Tip: letters Y, C, L, B, V are the easiest. Look up an ASL alphabet chart for the handshapes.")
+st.caption("Tipp: Die Buchstaben Y, C, L, B, V sind am einfachsten. Schau in eine ASL-Alphabet-Tabelle für die Handformen.")

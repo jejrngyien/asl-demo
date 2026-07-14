@@ -1,44 +1,43 @@
-# 🤟 ASL Fingerspelling Recognition — Live Demo
+# 🤟 ASL-Fingeralphabet-Erkennung — Live-Demo
 
-Interactive **Streamlit** demo of a **C3D** model that recognizes **American Sign
-Language fingerspelling** (A–Z + del/space/nothing) from a single image. Show a
-handshape to your webcam or upload a photo — the app crops your hand with
-**MediaPipe** and predicts the letter.
+Interaktive **Streamlit**-Demo eines **C3D**-Modells, das das **Fingeralphabet der
+amerikanischen Gebärdensprache** (A–Z + del/space/nothing) aus einem einzelnen Bild
+erkennt. Zeig deiner Webcam eine Handform oder lade ein Foto hoch — die App schneidet
+mit **MediaPipe** deine Hand aus und sagt den Buchstaben voraus.
 
-Deployable front-end for the
-**[ASL Recognition with 3D CNNs](https://github.com/jejrngyien/asl)** project
-(training pipeline, R(2+1)D comparison, and word-level WLASL experiments live there).
+Bereitstellbares Frontend zum Projekt
+**[ASL Recognition with 3D CNNs](https://github.com/jejrngyien/asl)**
+(Trainings-Pipeline, R(2+1)D-Vergleich und WLASL-Experimente auf Wortebene liegen dort).
 
-## How the model is loaded
+## Wie das Modell geladen wird
 
-The weights (~330 MB) are **not** committed. They are downloaded once from a
-**GitHub Release** the first time the app starts. Set the URL via the `MODEL_URL`
-constant in [`streamlit_app.py`](streamlit_app.py) or as a Streamlit secret, e.g.:
+Die Gewichte (~330 MB) sind **nicht** eingecheckt. Sie werden beim ersten Start einmalig
+von einem **GitHub-Release** heruntergeladen. Die URL wird über die Konstante `MODEL_URL`
+in [`streamlit_app.py`](streamlit_app.py) oder als Streamlit-Secret gesetzt, z. B.:
 
 ```
 https://github.com/USERNAME/asl-demo/releases/download/v1.0/model.pt
 ```
 
-A local `model.pt` next to the app is used if present (handy for local runs).
+Eine lokale `model.pt` neben der App wird verwendet, falls vorhanden (praktisch für lokale Läufe).
 
-## Run locally
+## Lokal ausführen
 
 ```bash
 pip install -r requirements.txt
-# place the checkpoint next to the app as model.pt (or set MODEL_URL)
+# den Checkpoint als model.pt neben die App legen (oder MODEL_URL setzen)
 streamlit run streamlit_app.py
 ```
 
-## Deploy on Streamlit Community Cloud (free)
+## Auf Streamlit Community Cloud deployen (kostenlos)
 
-1. Push this folder to a **GitHub** repo.
-2. Create a **Release** on that repo and attach `model.pt` as an asset.
-3. Put the release download URL into `MODEL_URL` (in `streamlit_app.py` or as a secret).
-4. Go to **share.streamlit.io** → **New app** → pick the repo and
-   `streamlit_app.py` → **Deploy**.
+1. Diesen Ordner in ein **GitHub**-Repo pushen.
+2. Ein **Release** auf dem Repo erstellen und `model.pt` als Asset anhängen.
+3. Die Release-Download-URL in `MODEL_URL` eintragen (in `streamlit_app.py` oder als Secret).
+4. Auf **share.streamlit.io** → **New app** → Repo und `streamlit_app.py` wählen → **Deploy**.
 
-## Notes
+## Hinweise
 
-- **Model:** static C3D, ~84% Top-1 on the Kaggle ASL Alphabet test set.
-- **Input:** the model sees a 112×112 hand crop (shown in the app for transparency).
-- **Tip:** letters **Y, C, L, B, V** are the easiest; use a clear, well-lit handshape.
+- **Modell:** statisches C3D, ~84 % Top-1 auf dem Kaggle-ASL-Alphabet-Testset.
+- **Eingabe:** Das Modell sieht einen 112×112-Handausschnitt (in der App zur Transparenz angezeigt).
+- **Tipp:** Die Buchstaben **Y, C, L, B, V** sind am einfachsten; nutze eine klare, gut beleuchtete Handform.
